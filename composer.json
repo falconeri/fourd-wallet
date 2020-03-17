@@ -1,0 +1,55 @@
+{
+    "name": "falconeri/fourd-wallet",
+    "description": "Multi wallets and Ledger systems",
+    "keywords": [
+        "falconeri",
+        "fourd-wallet"
+    ],
+    "homepage": "https://github.com/falconeri/fourd-wallet",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alta Falconeri",
+            "email": "falconeriata@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "illuminate/support": "^6.0",
+        "ramsey/uuid": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Falconeri\\FourdWallet\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Falconeri\\FourdWallet\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Falconeri\\FourdWallet\\FourdWalletServiceProvider"
+            ],
+            "aliases": {
+                "FourdWallet": "Falconeri\\FourdWallet\\FourdWalletFacade"
+            }
+        }
+    }
+}
