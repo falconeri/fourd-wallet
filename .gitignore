@@ -3,3 +3,9 @@ composer.lock
 docs
 vendor
 coverage
+.phpunit.result.cache
+.php_cs_cache
+.DS_Store
+/.idea
+/.vscode
+/.vagrant
