@@ -40,4 +40,16 @@ class FourdWalletTransaction extends Model
     {
         return $this->belongsTo(FourdWallet::class);
     }
+
+    /**
+     * Retrieve the amount with the positive or negative sign
+     *
+     * @return string
+     */
+    public function getAmountWithSignAttribute()
+    {
+        return in_array($this->type, [self::TYPE_DEPOSIT])
+            ? '+'.$this->amount
+            : '-'.$this->amount;
+    }
 }

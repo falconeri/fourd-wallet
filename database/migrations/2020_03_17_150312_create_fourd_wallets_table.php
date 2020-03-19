@@ -20,7 +20,7 @@ class CreateFourdWalletsTable extends Migration
             $table->string('name');
             $table->string('slug')->index();
             $table->string('description')->nullable();
-            $table->decimal('balance', 12, 4)->default(0);
+            $table->decimal('raw_balance', 12, 4)->default(0);
             $table->timestamps();
             $table->softDeletes();
 

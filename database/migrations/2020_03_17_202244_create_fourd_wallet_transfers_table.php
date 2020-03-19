@@ -1,6 +1,6 @@
 <?php
 
-use Falconeri\FourdWallet\FourdWalletTransfer;
+use Falconeri\FourdWallet\Models\FourdWalletTransfer;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -26,7 +26,7 @@ class CreateFourdWalletTransfersTable extends Migration
             $table->bigIncrements('id');
             $table->morphs('from');
             $table->morphs('to');
-            $table->enum('status', $enums)->default(FourdWalletTransfer::STATUS_PAID);
+            $table->enum('status', $enums)->default(FourdWalletTransfer::STATUS_TRANSFER);
             $table->enum('status_last', $enums)->nullable();
             $table->unsignedBigInteger('deposit_id');
             $table->unsignedBigInteger('withdraw_id');
