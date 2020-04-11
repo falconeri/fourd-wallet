@@ -27,17 +27,26 @@ trait HasWallets
      */
     public function wallet($name = null)
     {
-        $slug = Str::slug($name);
+        $wallets = $this->wallets();
 
-        if (is_null($slug)) {
+        if (is_null($name)) {
             $slug = 'default';
-        } elseif (is_string($slug)) {
-            $slug = $slug;
+            $wallets = $wallets->where('slug', $slug);
+        } elseif (is_int($name)) {
+            $slug = Str::slug(Str::random('9'));
+            $id = (int) $name;
+            $wallets = $wallets->where('id', $id);
+        } elseif (is_string($name)) {
+            $slug = Str::slug($name);
+            $wallets = $wallets->where('slug', $slug);
         } else {
             $slug = 'default';
+            $wallets = $wallets->where('slug', $slug);
         }
 
-        return $this->wallets()->where('slug', $slug)->firstOrCreate(['name' => $name, 'slug' => $slug]);
+        $wallets = $wallets->firstOrCreate(['name' => $name, 'slug' => $slug]);
+
+        return $wallets;
     }
 
     /**
