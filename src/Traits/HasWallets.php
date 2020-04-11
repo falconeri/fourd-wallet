@@ -22,29 +22,26 @@ trait HasWallets
     /**
      * method to get wallet by slug
      *
-     * @param  null  $slug
+     * @param  null  $name
      * @return mixed
      */
     public function wallet($name = null)
     {
-        $wallets = $this->wallets();
+        $where = 'slug';
 
         if (is_null($name)) {
-            $slug = 'default';
-            $wallets = $wallets->where('slug', $slug);
+            $whereCon = $slug = $name = 'default';
         } elseif (is_int($name)) {
-            $slug = Str::slug(Str::random('9'));
-            $id = (int) $name;
-            $wallets = $wallets->where('id', $id);
+            $where = 'id';
+            $whereCon = (int) $name;
+            $slug = $name = Str::slug(Str::random('9'));
         } elseif (is_string($name)) {
-            $slug = Str::slug($name);
-            $wallets = $wallets->where('slug', $slug);
+            $whereCon = $slug = Str::slug($name);
         } else {
-            $slug = 'default';
-            $wallets = $wallets->where('slug', $slug);
+            $whereCon = $slug = $name = 'default';
         }
 
-        $wallets = $wallets->firstOrCreate(['name' => $name, 'slug' => $slug]);
+        $wallets = $this->wallets()->where($where, $whereCon)->firstOrCreate(['name' => $name, 'slug' => $slug]);
 
         return $wallets;
     }
