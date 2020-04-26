@@ -38,7 +38,7 @@ class FourdWalletTransaction extends Model
      */
     public function wallet()
     {
-        return $this->belongsTo(FourdWallet::class);
+        return $this->belongsTo(FourdWallet::class, 'fourd_wallet_id', 'id');
     }
 
     /**
