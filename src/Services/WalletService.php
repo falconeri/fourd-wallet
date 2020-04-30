@@ -106,4 +106,12 @@ class WalletService
             throw new InsufficientFunds('Insufficient funds');
         }
     }
+
+    public function refresh($wallet)
+    {
+        $balance = $wallet->actualBalance();
+        $wallet->raw_balance = $balance;
+
+        return $wallet->save();
+    }
 }

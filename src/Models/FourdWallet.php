@@ -135,6 +135,15 @@ class FourdWallet extends Model
             ->where('confirmed', 1)
             ->sum('amount');
 
-        return (float) number_format($credits - $debits, 4);
+        return (float) $credits - $debits;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function refreshBalance(): bool
+    {
+        return app(WalletService::class)->refresh($this);
     }
 }
