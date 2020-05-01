@@ -116,16 +116,18 @@ class WalletService
      */
     public function updateBalance(FourdWallet $wallet, FourdWalletTransaction $transaction): bool
     {
-        $balance = ['raw_balance' => $wallet->raw_balance];
+        $balance = $wallet->raw_balance;
 
         if ($transaction->type === FourdWalletTransaction::TYPE_WITHDRAW) {
-            $balance['raw_balance'] -= abs($transaction->amount);
+            $balance -= abs($transaction->amount);
         }
 
         if ($transaction->type === FourdWalletTransaction::TYPE_DEPOSIT) {
-            $balance['raw_balance'] += abs($transaction->amount);
+            $balance += abs($transaction->amount);
         }
 
-        return $wallet->update(compact('balance'));
+        $wallet->raw_balance = $balance;
+
+        return $wallet->save();
     }
 }
