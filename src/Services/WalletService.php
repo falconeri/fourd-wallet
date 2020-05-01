@@ -5,6 +5,7 @@ namespace Falconeri\FourdWallet\Services;
 
 use Falconeri\FourdWallet\Exceptions\BalanceIsEmpty;
 use Falconeri\FourdWallet\Exceptions\InsufficientFunds;
+use Falconeri\FourdWallet\Models\FourdWallet;
 use Falconeri\FourdWallet\Models\FourdWalletTransfer;
 use Falconeri\FourdWallet\Models\FourdWalletTransaction;
 use Ramsey\Uuid\Uuid;
@@ -106,5 +107,25 @@ class WalletService
         $wallet->raw_balance = $balance;
 
         return $wallet->save();
+    }
+
+    /**
+     * @param  FourdWallet  $wallet
+     * @param  FourdWalletTransaction  $transaction
+     * @return bool
+     */
+    public function updateBalance(FourdWallet $wallet, FourdWalletTransaction $transaction): bool
+    {
+        $balance = ['raw_balance' => $wallet->raw_balance];
+
+        if ($transaction->type === FourdWalletTransaction::TYPE_WITHDRAW) {
+            $balance['raw_balance'] -= abs($transaction->amount);
+        }
+
+        if ($transaction->type === FourdWalletTransaction::TYPE_DEPOSIT) {
+            $balance['raw_balance'] += abs($transaction->amount);
+        }
+
+        return $wallet->update(compact('balance'));
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Falconeri\FourdWallet\Models;
 
+use Falconeri\FourdWallet\Exceptions\ConfirmedInvalid;
+use Falconeri\FourdWallet\Exceptions\WalletOwnerInvalid;
 use Falconeri\FourdWallet\Services\WalletService;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 
 class FourdWallet extends Model
@@ -145,5 +145,35 @@ class FourdWallet extends Model
     public function refreshBalance(): bool
     {
         return app(WalletService::class)->refresh($this);
+    }
+
+    /**
+     * @param  FourdWalletTransaction  $transaction
+     * @return bool
+     */
+    public function confirm(FourdWalletTransaction $transaction): bool
+    {
+        $wallet = $transaction->wallet;
+
+        if (!$wallet->refreshBalance()) {
+            return false;
+        }
+
+        if ($transaction->type === FourdWalletTransaction::TYPE_WITHDRAW) {
+            app(WalletService::class)->verifyWithdraw($wallet, abs($transaction->amount)
+            );
+        }
+
+        if ($transaction->confirmed) {
+            throw new ConfirmedInvalid('The transaction has already been confirmed');
+        }
+
+        if ($wallet->id !== $transaction->fourd_wallet_id) {
+            throw new WalletOwnerInvalid('You are not the owner of the wallet');
+        }
+
+        return $transaction->update(['confirmed' => true]) &&
+            // update balance
+            app(WalletService::class)->updateBalance($wallet, $transaction);
     }
 }
