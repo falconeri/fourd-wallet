@@ -28,6 +28,9 @@ class FourdWalletTransfer extends Model
         'withdraw_id',
         'uuid',
         'fee',
+        'fee_percentage',
+        'bonus',
+        'bonus_percentage',
     ];
 
     /**

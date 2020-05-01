@@ -107,15 +107,28 @@ class FourdWallet extends Model
 
     /**
      * @param  FourdWallet  $walletTo
-     * @param  integer  $amount
+     * @param  int  $amount
      * @param  null  $remark
      * @param  array  $meta
+     * @param  int  $fee
+     * @param  int  $feePercentage
+     * @param  int  $bonus
+     * @param  int  $bonusPercentage
      * @return mixed
      */
-    public function transfer($walletTo, $amount, $remark = null, $meta = [])
-    {
+    public function transfer(
+        $walletTo,
+        $amount,
+        $remark = null,
+        $meta = [],
+        $fee = 0,
+        $feePercentage = 0,
+        $bonus = 0,
+        $bonusPercentage = 0
+    ) {
         $self = $this;
-        return app(WalletService::class)->transfer($self, $walletTo, $amount, $remark, $meta);
+        return app(WalletService::class)->transfer($self, $walletTo, $amount, $remark, $meta, $fee, $feePercentage,
+            $bonus, $bonusPercentage);
     }
 
     /**

@@ -30,7 +30,10 @@ class CreateFourdWalletTransfersTable extends Migration
             $table->enum('status_last', $enums)->nullable();
             $table->unsignedBigInteger('deposit_id');
             $table->unsignedBigInteger('withdraw_id');
-            $table->bigInteger('fee')->default(0);
+            $table->decimal('fee', 12, 4);
+            $table->integer('fee_percentage')->default(0);
+            $table->decimal('bonus', 12, 4);
+            $table->integer('bonus_percentage')->default(0);
             $table->uuid('uuid')->unique();
             $table->timestamps();
             $table->softDeletes();

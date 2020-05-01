@@ -18,10 +18,15 @@ class WalletService
         $amount,
         $remark = null,
         $meta = [],
+        $fee = 0,
+        $feePercentage = 0,
+        $bonus = 0,
+        $bonusPercentage = 0,
         $status = FourdWalletTransfer::STATUS_TRANSFER
     ) {
         $this->verifyWithdraw($from, $amount);
-        return $this->forceTransfer($from, $to, $amount, $remark, $meta, $status);
+        return $this->forceTransfer($from, $to, $amount, $remark, $meta, $fee, $feePercentage, $bonus, $bonusPercentage,
+            $status);
     }
 
     public function forceTransfer(
@@ -30,10 +35,30 @@ class WalletService
         $amount,
         $remark = null,
         $meta = [],
+        $fee = 0,
+        $feePercentage = 0,
+        $bonus = 0,
+        $bonusPercentage = 0,
         $status = FourdWalletTransfer::STATUS_TRANSFER
     ) {
         $withdraw = $this->withdraw($from, $amount, $remark, $meta);
-        $deposit = $this->deposit($to, $amount, $remark, $meta);
+
+        $final_amount = $amount;
+        // calculate fee
+        if ($feePercentage > 0) {
+            $final_amount -= $amount * ($feePercentage / 100);
+        } elseif ($fee > 0) {
+            $final_amount -= $fee;
+        }
+
+        // calculate bonus
+        if ($bonusPercentage > 0) {
+            $final_amount += $amount * ($bonusPercentage / 100);
+        } elseif ($bonus > 0) {
+            $final_amount += $bonus;
+        }
+
+        $deposit = $this->deposit($to, $final_amount, $remark, $meta);
 
         return app(FourdWalletTransfer::class)->create([
             'status' => $status,
@@ -44,7 +69,10 @@ class WalletService
             'to_id' => $to->getKey(),
             'to_type' => $to->getMorphClass(),
             'uuid' => Uuid::uuid4()->toString(),
-            'fee' => 0
+            'fee' => $fee,
+            'fee_percentage' => $feePercentage,
+            'bonus' => $bonus,
+            'bonus_percentage' => $bonusPercentage,
         ]);
     }
 
