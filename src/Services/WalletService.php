@@ -7,7 +7,6 @@ use Falconeri\FourdWallet\Exceptions\BalanceIsEmpty;
 use Falconeri\FourdWallet\Exceptions\InsufficientFunds;
 use Falconeri\FourdWallet\Models\FourdWalletTransfer;
 use Falconeri\FourdWallet\Models\FourdWalletTransaction;
-use Falconeri\FourdWallet\Models\FourdWallet;
 use Ramsey\Uuid\Uuid;
 
 class WalletService
@@ -35,7 +34,7 @@ class WalletService
         $withdraw = $this->withdraw($from, $amount, $remark, $meta);
         $deposit = $this->deposit($to, $amount, $remark, $meta);
 
-        $transfers = app(FourdWalletTransfer::class)->create([
+        return app(FourdWalletTransfer::class)->create([
             'status' => $status,
             'deposit_id' => $deposit->getKey(),
             'withdraw_id' => $withdraw->getKey(),
@@ -46,8 +45,6 @@ class WalletService
             'uuid' => Uuid::uuid4()->toString(),
             'fee' => 0
         ]);
-
-        return $transfers;
     }
 
     public function deposit($wallet, $amount, $remark = null, $meta = [], $confirmed = true)
@@ -59,7 +56,7 @@ class WalletService
             $wallet->save();
         }
 
-        $transactions = $wallet->transactions()
+        return $wallet->transactions()
             ->create([
                 'amount' => $amount,
                 'uuid' => Uuid::uuid4()->toString(),
@@ -68,13 +65,11 @@ class WalletService
                 'meta' => $meta,
                 'remark' => $remark
             ]);
-
-        return $transactions;
     }
 
     public function withdraw($wallet, $amount, $remark = null, $meta = [], $confirmed = true)
     {
-        $accepted = $confirmed ? $wallet->canWithdraw($amount) : true;
+        $accepted = $confirmed ? $wallet->canWithdraw($amount) : false;
 
         if ($accepted) {
             $wallet->raw_balance -= $amount;
@@ -83,7 +78,7 @@ class WalletService
             $wallet->save();
         }
 
-        $transactions = $wallet->transactions()
+        return $wallet->transactions()
             ->create([
                 'amount' => $amount,
                 'uuid' => Uuid::uuid4()->toString(),
@@ -92,8 +87,6 @@ class WalletService
                 'meta' => $meta,
                 'remark' => $remark
             ]);
-
-        return $transactions;
     }
 
     public function verifyWithdraw($wallet, $amount)
